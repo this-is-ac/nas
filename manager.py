@@ -33,7 +33,7 @@ class NetworkManager:
         self.beta_bias = acc_beta
         self.moving_acc = 0.0
 
-    def get_rewards(self, model_fn, actions):
+    def get_rewards(self, model_fn, actions, cust_train_data):
         '''
         Creates a subnetwork given the actions predicted by the controller RNN,
         trains it on the provided dataset, and then returns a reward.
@@ -64,16 +64,17 @@ class NetworkManager:
 
             # generate a submodel given predicted actions
             # model = model_fn(actions)  # type: Model
-            k_matrix = model_fn(actions)  # type: Model
+            k_matrix = model_fn(actions, cust_train_data)  # type: Model
 
             clf = svm.SVR(kernel="precomputed")
 
             # model.compile('adam', 'categorical_crossentropy', metrics=['accuracy'])
 
             # unpack the dataset
-            X_train, y_train, X_val, y_val = self.dataset
+            #X_train, y_train, X_val, y_val = self.dataset
+            train_train_x, train_train_y, train_labels, validation_train_x, validation_train_y, val_labels = self.dataset
 
-            clf.fit(k_matrix, y_train)
+            clf.fit(k_matrix, train_labels)
 
             # train the model using Keras methods
             # model.fit(X_train, y_train, batch_size=self.batchsize, epochs=self.epochs,

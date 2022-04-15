@@ -148,7 +148,7 @@ state_space.add_state(name='binaryOp', values=[summation, multiply, difference, 
 
 state_space.print_state_space()
 
-df = pd.read_csv('Merged.csv', encoding= 'unicode_escape')
+df = pd.read_csv('nas/Merged.csv', encoding= 'unicode_escape')
 df = df[:-2]
 
 from sklearn.preprocessing import MinMaxScaler
@@ -204,7 +204,19 @@ Y_test = scaler_y.transform(Y_test)
 X_train = np.concatenate((x2_train, x3_train, x4_train), axis = 1)
 X_test = np.concatenate((x2_test, x3_test, x4_test), axis = 1)
 
-dataset = [X_train, Y_train, X_test, Y_test]
+def get_meshgrid(a1, a2) :
+	x = np.arange(len(a2))
+	y = np.arange(len(a1))
+	xx,yy = np.meshgrid(x, y)
+	yy = np.reshape(yy, [-1])
+	xx = np.reshape(xx, [-1])
+	return a1[yy], a2[xx]
+
+train_train_x, train_train_y = get_meshgrid(X_train, X_train)
+validation_train_x, validation_train_y = get_meshgrid(X_test, X_train)
+
+#dataset = [X_train, Y_train, X_test, Y_test]
+dataset = [train_train_x, train_train_y, train_labels, validation_train_x, validation_train_y, val_labels]
 
 previous_acc = 0.0
 total_reward = 0.0
@@ -236,7 +248,7 @@ for trial in range(MAX_TRIALS):
     print("Predicted actions : ", state_space.parse_state_space_list(actions))
 
     # build a model, train and get reward and accuracy from the network manager
-    reward, previous_acc = manager.get_rewards(model_fn, state_space.parse_state_space_list(actions))
+    reward, previous_acc = manager.get_rewards(model_fn, state_space.parse_state_space_list(actions), [train_train_x, train_train_y])
     print("Rewards : ", reward, "Accuracy : ", previous_acc)
 
     with policy_sess.as_default():
