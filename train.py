@@ -204,6 +204,9 @@ Y_test = scaler_y.transform(Y_test)
 X_train = np.concatenate((x2_train, x3_train, x4_train), axis = 1)
 X_test = np.concatenate((x2_test, x3_test, x4_test), axis = 1)
 
+data_limit = 2000
+X_train, X_test, Y_train, Y_test = X_train[:data_limit], X_test[:data_limit], Y_train[:data_limit], Y_test[:data_limit]
+
 def get_meshgrid(a1, a2) :
 	x = np.arange(len(a2))
 	y = np.arange(len(a1))
@@ -216,7 +219,7 @@ train_train_x, train_train_y = get_meshgrid(X_train, X_train)
 validation_train_x, validation_train_y = get_meshgrid(X_test, X_train)
 
 #dataset = [X_train, Y_train, X_test, Y_test]
-dataset = [train_train_x, train_train_y, train_labels, validation_train_x, validation_train_y, val_labels]
+dataset = [train_train_x, train_train_y, Y_train, validation_train_x, validation_train_y, Y_test]
 
 previous_acc = 0.0
 total_reward = 0.0
