@@ -241,6 +241,10 @@ print()
 
 controller.remove_files()
 
+with open('train_history.csv', mode='a+') as f:
+    writer = csv.writer(f)
+    writer.writerow(['Loss', 'Previous Accuracy', 'Reward', 'Actions']) 
+
 for trial in range(MAX_TRIALS):
     with policy_sess.as_default():
         K.set_session(policy_sess)
