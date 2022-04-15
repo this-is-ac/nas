@@ -26,7 +26,7 @@ policy_sess = tf.Session()
 K.set_session(policy_sess)
 
 NUM_LAYERS = 2  # number of layers of the state space
-MAX_TRIALS = 50  # maximum number of models generated
+MAX_TRIALS = 10000  # maximum number of models generated
 
 MAX_EPOCHS = 1  # maximum number of epochs to train
 CHILD_BATCHSIZE = 128  # batchsize of the child models
@@ -204,7 +204,7 @@ Y_test = scaler_y.transform(Y_test)
 X_train = np.concatenate((x2_train, x3_train, x4_train), axis = 1)
 X_test = np.concatenate((x2_test, x3_test, x4_test), axis = 1)
 
-data_limit = 2000
+data_limit = 3000
 X_train, X_test, Y_train, Y_test = X_train[:data_limit], X_test[:data_limit], Y_train[:data_limit], Y_test[:data_limit]
 
 def get_meshgrid(a1, a2) :

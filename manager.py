@@ -6,6 +6,8 @@ from keras.models import Model
 from keras import backend as K
 from keras.callbacks import ModelCheckpoint
 import tensorflow as tf
+from sklearn.metrics import mean_absolute_error
+from sklearn.metrics import r2_score
 
 class NetworkManager:
     '''
@@ -93,8 +95,8 @@ class NetworkManager:
             ### CHANGE THESE 2 LINES           
             predictions = clf.predict(val_k_matrix)
 
-            loss = mean_absolute_error(predictions, validation_label)
-            acc = clf.score(predictions, validation_label)
+            loss = mean_absolute_error(predictions, val_labels)
+            acc = r2_score(predictions, val_labels)
 
             # compute the reward
             reward = (acc - self.moving_acc)
