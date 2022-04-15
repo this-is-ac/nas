@@ -1,3 +1,5 @@
+import numpy as np
+
 def norm1(x, k) :
 	if np.array(x).shape[-1] == 1 :
 		return x
