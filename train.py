@@ -22,7 +22,6 @@ import pandas as pd
 from sklearn import svm
 import datetime
 
-# create a shared session between Keras and Tensorflow
 policy_sess = tf.Session()
 K.set_session(policy_sess)
 
@@ -139,12 +138,7 @@ def norm1(x, k) :
 
 ####################################################################################################
 
-# construct a state space
 state_space = StateSpace()
-
-# add states
-# state_space.add_state(name='kernel', values=[1, 3])
-# state_space.add_state(name='filters', values=[16, 32, 64])
 
 state_space.add_state(name='operator1', values=[lambda x, y : absolute(difference(x, y)), summation, squared_diff, lambda x, y : norm(difference(x, y), 1), lambda x, y : norm(difference(x, y), 2), dot_prod, multiply])
 state_space.add_state(name='operator2', values=[lambda x, y : absolute(difference(x, y)), summation, squared_diff, lambda x, y : norm(difference(x, y), 1), lambda x, y : norm(difference(x, y), 2), dot_prod, multiply])
@@ -152,10 +146,7 @@ state_space.add_state(name='unaryOp1', values=[unity, negation, absolute, lambda
 state_space.add_state(name='unaryOp2', values=[unity, negation, absolute, lambda x : power(x,2), lambda x : power(x,3), sqrt, exp, sin, cos, sinh, cosh, tanh, lambda x : maximum(x,0), lambda x : minimum(x,0), sigmoid, lambda x : log(1 + exp(x)), lambda x : norm(x, 1), lambda x : norm(x, 2)])
 state_space.add_state(name='binaryOp', values=[summation, multiply, difference, maximum, minimum,dot_prod, lambda x,y : exp(-1 * absolute(difference(x,y))), lambda x,y : x])
 
-# print the state space being searched
 state_space.print_state_space()
-
-# prepare the training data for the NetworkManager
 
 df = pd.read_csv('Merged.csv', encoding= 'unicode_escape')
 df = df[:-2]
@@ -201,39 +192,24 @@ x4_train = scaler_x4.transform(x4_train)
 x4_test = scaler_x4.transform(x4_test)
 
 scaler_y = MinMaxScaler()
-
 Y = df['Direct Normal'].to_numpy()
 Y = np.reshape(Y,(-1,1))
-
 n = len(Y)
-
 Y_train = Y[:int(split * n)]
 Y_test = Y[int(split * n):]
-
 scaler_y.fit(Y_train)
 Y_train = scaler_y.transform(Y_train)
 Y_test = scaler_y.transform(Y_test)
 
-# Y_train = Y_train.ravel()
-# Y_test = Y_test.ravel()
-
 X_train = np.concatenate((x2_train, x3_train, x4_train), axis = 1)
 X_test = np.concatenate((x2_test, x3_test, x4_test), axis = 1)
 
-# (x_train, y_train), (x_test, y_test) = cifar10.load_data()
-# x_train = x_train.astype('float32') / 255.
-# x_test = x_test.astype('float32') / 255.
-# y_train = to_categorical(y_train, 10)
-# y_test = to_categorical(y_test, 10)
-
-#dataset = [x_train, y_train, x_test, y_test]  # pack the dataset for the NetworkManager
-dataset = [X_train, Y_train, X_test, Y_test]  # pack the dataset for the NetworkManager
+dataset = [X_train, Y_train, X_test, Y_test]
 
 previous_acc = 0.0
 total_reward = 0.0
 
 with policy_sess.as_default():
-    # create the Controller and build the internal policy network
     controller = Controller(policy_sess, NUM_LAYERS, state_space,
                             reg_param=REGULARIZATION,
                             exploration=EXPLORATION,
@@ -241,20 +217,15 @@ with policy_sess.as_default():
                             embedding_dim=EMBEDDING_DIM,
                             restore_controller=RESTORE_CONTROLLER)
 
-# create the Network Manager
 manager = NetworkManager(dataset, epochs=MAX_EPOCHS, child_batchsize=CHILD_BATCHSIZE, clip_rewards=CLIP_REWARDS,
                          acc_beta=ACCURACY_BETA)
 
-# get an initial random state space if controller needs to predict an
-# action from the initial state
 state = state_space.get_random_state_space(NUM_LAYERS)
 print("Initial Random State : ", state_space.parse_state_space_list(state))
 print()
 
-# clear the previous files
 controller.remove_files()
 
-# train for number of trails
 for trial in range(MAX_TRIALS):
     with policy_sess.as_default():
         K.set_session(policy_sess)
@@ -283,8 +254,9 @@ for trial in range(MAX_TRIALS):
         print("Trial %d: Controller loss : %0.6f" % (trial + 1, loss))
 
         # write the results of this trial into a file
+        # loss - previous_accuracy - reward - actions/state
         with open('train_history.csv', mode='a+') as f:
-            data = [previous_acc, reward]
+            data = [loss, previous_acc, reward]
             data.extend(state_space.parse_state_space_list(state))
             writer = csv.writer(f)
             writer.writerow(data)
