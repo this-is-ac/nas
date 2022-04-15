@@ -118,7 +118,7 @@ def norm(x, k) :
 	return np.linalg.norm(x, ord = k, axis = -1, keepdims = True)*gamma(x, 1)
 
 def gamma(x, y) :
-	return 1.0/float(train_data.shape[1])
+	return 1.0/float(np.array(x).shape[1])
 
 def squared_diff(x, y) :
 	return absolute(difference(x**2, y**2))
