@@ -64,7 +64,7 @@ class NetworkManager:
 
             # generate a submodel given predicted actions
             # model = model_fn(actions)  # type: Model
-            k_matrix = model_fn(actions, cust_train_data, NUM_UNITS)  # type: Model
+            train_k_matrix, val_k_matrix = model_fn(actions, cust_train_data, NUM_UNITS)  # type: Model
 
             clf = svm.SVR(kernel="precomputed")
 
@@ -74,7 +74,7 @@ class NetworkManager:
             #X_train, y_train, X_val, y_val = self.dataset
             train_train_x, train_train_y, train_labels, validation_train_x, validation_train_y, val_labels = self.dataset
 
-            clf.fit(k_matrix, train_labels)
+            clf.fit(train_k_matrix, train_labels)
 
             # train the model using Keras methods
             # model.fit(X_train, y_train, batch_size=self.batchsize, epochs=self.epochs,
@@ -91,8 +91,10 @@ class NetworkManager:
             # loss, acc = model.evaluate(X_val, y_val, batch_size=self.batchsize)
 
             ### CHANGE THESE 2 LINES           
+            predictions = clf.predict(val_k_matrix)
+
             loss = mean_absolute_error(predictions, validation_label)
-            acc = clf.predict(CustomKernelGramMatrix(validation_train_x, validation_train_y, individual, len(validation_data), len(train_data)))
+            acc = clf.score(predictions, validation_label)
 
             # compute the reward
             reward = (acc - self.moving_acc)

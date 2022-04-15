@@ -14,6 +14,9 @@ def CustomKernelGramMatrix(X1, X2, individual, l1, l2, numUnits) :
 
 def model_fn(actions, cust_train_data, numUnits):
     #op1_l1, u1_l1, op2_l1, u2_l1, b_l1, op1_l2, u1_l2, op2_l2, u2_l2, b_l2 = actions
-    train_train_x, train_train_y = cust_train_data
-    k_matrix = CustomKernelGramMatrix(train_train_x, train_train_y, actions, len(train_train_x), len(train_train_x), numUnits)
-    return k_matrix
+    
+    train_train_x, train_train_y, validation_train_x, validation_train_y = cust_train_data
+    train_k_matrix = CustomKernelGramMatrix(train_train_x, train_train_y, actions, len(train_train_x), len(train_train_x), numUnits)
+    val_train_matrix = CustomKernelGramMatrix(validation_train_x, validation_train_y, actions, len(train_train_x), len(train_train_x), numUnits)
+    
+    return train_k_matrix,val_train_matrix
