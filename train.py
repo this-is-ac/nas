@@ -218,6 +218,11 @@ def get_meshgrid(a1, a2) :
 train_train_x, train_train_y = get_meshgrid(X_train, X_train)
 validation_train_x, validation_train_y = get_meshgrid(X_test, X_train)
 
+print("AC TESTINGGGGGGGGGGGGGGGGGGGGGGGGG")
+print("X_train", X_train.shape)
+print("train_train", train_train_x.shape)
+
+
 #dataset = [X_train, Y_train, X_test, Y_test]
 dataset = [train_train_x, train_train_y, Y_train, validation_train_x, validation_train_y, Y_test]
 
