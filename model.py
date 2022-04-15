@@ -4,7 +4,9 @@
 # generic model design
 def model_fn(actions):
     # unpack the actions from the list
-    kernel_1, filters_1, kernel_2, filters_2, kernel_3, filters_3, kernel_4, filters_4 = actions
+    print("INSIDE MODEL FUNCTION")
+    print(len(actions))
+    #kernel_1, filters_1, kernel_2, filters_2, kernel_3, filters_3, kernel_4, filters_4 = actions
     op1_l1, op2_l1, u1_l1, u2_l1, b_l1, op1_l2, op2_l2, u1_l2, u2_l2, b_l2 = actions
 
     # ip = Input(shape=(32, 32, 3))
