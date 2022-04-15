@@ -1,5 +1,7 @@
 import numpy as np
 
+from sklearn import svm
+
 from keras.models import Model
 from keras import backend as K
 from keras.callbacks import ModelCheckpoint
@@ -61,25 +63,35 @@ class NetworkManager:
             K.set_session(network_sess)
 
             # generate a submodel given predicted actions
-            model = model_fn(actions)  # type: Model
-            model.compile('adam', 'categorical_crossentropy', metrics=['accuracy'])
+            # model = model_fn(actions)  # type: Model
+            k_matrix = model_fn(actions)  # type: Model
+
+            clf = svm.SVR(kernel="precomputed")
+
+            # model.compile('adam', 'categorical_crossentropy', metrics=['accuracy'])
 
             # unpack the dataset
             X_train, y_train, X_val, y_val = self.dataset
 
+            clf.fit(k_matrix, y_train)
+
             # train the model using Keras methods
-            model.fit(X_train, y_train, batch_size=self.batchsize, epochs=self.epochs,
-                      verbose=1, validation_data=(X_val, y_val),
-                      callbacks=[ModelCheckpoint('weights/temp_network.h5',
-                                                 monitor='val_acc', verbose=1,
-                                                 save_best_only=True,
-                                                 save_weights_only=True)])
+            # model.fit(X_train, y_train, batch_size=self.batchsize, epochs=self.epochs,
+            #           verbose=1, validation_data=(X_val, y_val),
+            #           callbacks=[ModelCheckpoint('weights/temp_network.h5',
+            #                                      monitor='val_acc', verbose=1,
+            #                                      save_best_only=True,
+            #                                      save_weights_only=True)])
 
             # load best performance epoch in this training session
-            model.load_weights('weights/temp_network.h5')
+            # model.load_weights('weights/temp_network.h5')
 
             # evaluate the model
-            loss, acc = model.evaluate(X_val, y_val, batch_size=self.batchsize)
+            # loss, acc = model.evaluate(X_val, y_val, batch_size=self.batchsize)
+
+            ### CHANGE THESE 2 LINES           
+            loss = mean_absolute_error(predictions, validation_label)
+            acc = clf.predict(CustomKernelGramMatrix(validation_train_x, validation_train_y, individual, len(validation_data), len(train_data)))
 
             # compute the reward
             reward = (acc - self.moving_acc)
