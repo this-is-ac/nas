@@ -141,8 +141,8 @@ def norm1(x, k) :
 state_space = StateSpace()
 
 state_space.add_state(name='operator1', values=[lambda x, y : absolute(difference(x, y)), summation, squared_diff, lambda x, y : norm(difference(x, y), 1), lambda x, y : norm(difference(x, y), 2), dot_prod, multiply])
-state_space.add_state(name='operator2', values=[lambda x, y : absolute(difference(x, y)), summation, squared_diff, lambda x, y : norm(difference(x, y), 1), lambda x, y : norm(difference(x, y), 2), dot_prod, multiply])
 state_space.add_state(name='unaryOp1', values=[unity, negation, absolute, lambda x : power(x,2), lambda x : power(x,3), sqrt, exp, sin, cos, sinh, cosh, tanh, lambda x : maximum(x,0), lambda x : minimum(x,0), sigmoid, lambda x : log(1 + exp(x)), lambda x : norm(x, 1), lambda x : norm(x, 2)])
+state_space.add_state(name='operator2', values=[lambda x, y : absolute(difference(x, y)), summation, squared_diff, lambda x, y : norm(difference(x, y), 1), lambda x, y : norm(difference(x, y), 2), dot_prod, multiply])
 state_space.add_state(name='unaryOp2', values=[unity, negation, absolute, lambda x : power(x,2), lambda x : power(x,3), sqrt, exp, sin, cos, sinh, cosh, tanh, lambda x : maximum(x,0), lambda x : minimum(x,0), sigmoid, lambda x : log(1 + exp(x)), lambda x : norm(x, 1), lambda x : norm(x, 2)])
 state_space.add_state(name='binaryOp', values=[summation, multiply, difference, maximum, minimum,dot_prod, lambda x,y : exp(-1 * absolute(difference(x,y))), lambda x,y : x])
 
@@ -251,7 +251,7 @@ for trial in range(MAX_TRIALS):
     print("Predicted actions : ", state_space.parse_state_space_list(actions))
 
     # build a model, train and get reward and accuracy from the network manager
-    reward, previous_acc = manager.get_rewards(model_fn, state_space.parse_state_space_list(actions), [train_train_x, train_train_y])
+    reward, previous_acc = manager.get_rewards(model_fn, state_space.parse_state_space_list(actions), [train_train_x, train_train_y], NUM_LAYERS)
     print("Rewards : ", reward, "Accuracy : ", previous_acc)
 
     with policy_sess.as_default():

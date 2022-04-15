@@ -33,7 +33,7 @@ class NetworkManager:
         self.beta_bias = acc_beta
         self.moving_acc = 0.0
 
-    def get_rewards(self, model_fn, actions, cust_train_data):
+    def get_rewards(self, model_fn, actions, cust_train_data, NUM_UNITS):
         '''
         Creates a subnetwork given the actions predicted by the controller RNN,
         trains it on the provided dataset, and then returns a reward.
@@ -64,7 +64,7 @@ class NetworkManager:
 
             # generate a submodel given predicted actions
             # model = model_fn(actions)  # type: Model
-            k_matrix = model_fn(actions, cust_train_data)  # type: Model
+            k_matrix = model_fn(actions, cust_train_data, NUM_UNITS)  # type: Model
 
             clf = svm.SVR(kernel="precomputed")
 
