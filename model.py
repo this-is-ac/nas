@@ -1,3 +1,8 @@
+def norm1(x, k) :
+	if np.array(x).shape[-1] == 1 :
+		return x
+	return np.linalg.norm(x, ord = k, axis = -1)
+
 def decodeUnit(unit, x, y, operands) :
     return 	unit[4](unit[1](unit[0](x,y)), unit[3](unit[2](x,y)))
 
