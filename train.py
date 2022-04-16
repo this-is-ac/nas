@@ -26,7 +26,7 @@ policy_sess = tf.Session()
 K.set_session(policy_sess)
 
 NUM_LAYERS = 2  # number of layers of the state space
-MAX_TRIALS = 10000  # maximum number of models generated
+MAX_TRIALS = 1000  # maximum number of models generated
 
 MAX_EPOCHS = 1  # maximum number of epochs to train
 CHILD_BATCHSIZE = 128  # batchsize of the child models

@@ -40,7 +40,7 @@ class NetworkManager:
 
             loss = mean_squared_error(val_labels, predictions, squared=False)
             acc = r2_score(val_labels, predictions)
-            print("INSIDE ACCCCCCCCCCCCCCCCCC LOPP : ", acc)
+
             reward = (acc - self.moving_acc)
 
             # if rewards are clipped, clip them in the range -0.05 to 0.05
