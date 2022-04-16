@@ -248,13 +248,11 @@ with open('train_history.csv', mode='a+') as f:
 for trial in range(MAX_TRIALS):
     with policy_sess.as_default():
         K.set_session(policy_sess)
-        actions = controller.get_action(state)  # get an action for the previous state
+        actions = controller.get_action(state) 
 
-    # print the action probabilities
     state_space.print_actions(actions)
     print("Predicted actions : ", state_space.parse_state_space_list(actions))
 
-    # build a model, train and get reward and accuracy from the network manager
     reward, previous_acc = manager.get_rewards(model_fn, state_space.parse_state_space_list(actions), [train_train_x, train_train_y, validation_train_x, validation_train_y], NUM_LAYERS)
     print("Rewards : ", reward, "Accuracy : ", previous_acc)
 
@@ -264,16 +262,12 @@ for trial in range(MAX_TRIALS):
         total_reward += reward
         print("Total reward : ", total_reward)
 
-        # actions and states are equivalent, save the state and reward
         state = actions
         controller.store_rollout(state, reward)
 
-        # train the controller on the saved state and the discounted rewards
         loss = controller.train_step()
         print("Trial %d: Controller loss : %0.6f" % (trial + 1, loss))
 
-        # write the results of this trial into a file
-        # loss - previous_accuracy - reward - actions/state
         with open('train_history.csv', mode='a+') as f:
             data = [loss, previous_acc, reward]
             data.extend(state_space.parse_state_space_list(state))
